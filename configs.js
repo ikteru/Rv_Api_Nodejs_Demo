@@ -1,5 +1,3 @@
-
-
 const FILENAME = "cubetest.rvwj";
 const FILE_TO_SLICE =  `./assets/${FILENAME}`;
 const SUPPORT_TYPE = 'n';

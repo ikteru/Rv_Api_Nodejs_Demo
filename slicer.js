@@ -6,7 +6,10 @@ require("dotenv").config();
 //Global Variables
 const baseUrl = process.env.API_LINK;
 
-//The HTTP Request functions, all these functions accept 
+//The HTTP Request functions, all these functions accept at most one parameter: 
+//      either the formData object which contains the file to slice and its configurations, or the uniqueID of the slicing job.
+//      or no parameter at all in GetActivationStatus's case
+
 module.exports.GetActivationStatus = async function() {
     let formData = {};
     return await module.exports.initializeRequest("POST", baseUrl, "GetActivationStatus", formData);
@@ -32,7 +35,9 @@ module.exports.DownloadFile = async function (id) {
 }
 
 
-//This functions saves the file in the downloads folder after it gets sliced.
+//This functions saves the file in the downloads folder. 
+//It is used right after the the DownlaodFile function is executed and returns the response
+
 module.exports.saveFile = function (filename, result){
     const fullname = filename + "." + Date.now() + ".fcode";
     const file = fs.createWriteStream(`./downloads/${fullname}`);
@@ -41,7 +46,8 @@ module.exports.saveFile = function (filename, result){
     console.log("File saved successfully in the Downloads folder under the name ::::: ", fullname);
 }
 
-//This is the function you call in order to execute the HTTP requests, all the functions above use this function.
+//This is the function you call in order to execute the HTTP requests,
+//all the functions above use this function.
 module.exports.initializeRequest = function (method, baseUrl, serviceCall, formData) {
     // Setting URL and headers for request
     let options = {

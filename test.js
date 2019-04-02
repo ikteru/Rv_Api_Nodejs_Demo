@@ -1,7 +1,12 @@
 // ******************************************************************** //
+// Imports
+// ******************************************************************** //
+
 let realvision = require('./slicer');
 let fs = require('fs');
 let configs = require('./configs.js');
+
+// ******************************************************************** // 
 // ******************************************************************** //
 
 //Use this to import the file that you want to slice, the file must have an .rvwj extension.
@@ -31,6 +36,8 @@ const formData =
 executeFlow(formData);
 
 // ******************************************************************** //
+// ******************************************************************** //
+
 async function executeFlow(formData){
 
     let activationStatus = realvision.GetActivationStatus();
