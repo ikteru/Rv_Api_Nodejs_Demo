@@ -1,10 +1,11 @@
 // ******************************************************************** //
 let realvision = require('./slicer');
 let fs = require('fs');
+require('dotenv').config;
 // ******************************************************************** //
 
 //Use this to import the file that you want to slice, the file must have an .rvwj extension.
-const rvwjFile = fs.createReadStream("./assets/cubetest.rvwj")
+const rvwjFile = fs.createReadStream(process.env.FILE_TO_SLICE)
 
 //This is the data you'll be sending with the ProvideFile POST request, feel free to specifiy the configurations you deem fit.
 
@@ -15,14 +16,14 @@ const formData =
         value: rvwjFile ,
         options:
         {
-            filename: 'cubetest.rvwj',
+            filename: 'filetoslice.rvwj',
             contentType: null
         }
     },
-    supportType: 'n',
-    printerModel: 'IdeaWerk-Speed',
-    configPresetName: 'Recommended',
-    configFile: ''
+    supportType: process.env.SUPPORT_TYPE,
+    printerModel: process.env.PRINTER_MODEL,
+    configPresetName: process.env.CONFIG_PRESET_NAME,
+    configFile: process.env.CONFIG_FILE
 } 
 
 // This function will execute the whole Slicing processing from checking the activation status to Downloading the file and saving it in the "downloads" folder.
