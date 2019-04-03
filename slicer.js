@@ -1,7 +1,8 @@
 //Imports //
-let fs = require('fs');
+let fs = require('fs')
 let request = require('request')
-require("dotenv").config();
+let configs = require('./configs')
+require("dotenv").config()
 
 //Global Variables
 const baseUrl = process.env.API_LINK;
