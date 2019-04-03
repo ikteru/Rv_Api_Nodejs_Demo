@@ -40,7 +40,7 @@ module.exports.DownloadFile = async function (id) {
 
 module.exports.saveFile = function (filename, result){
     const fullname = filename + "." + Date.now() + ".fcode";
-    const file = fs.createWriteStream(`./downloads/${fullname}`);
+    const file = fs.createWriteStream(configs.DOWNLOADS_FOLDER + fullname);
     file.write(result);
     file.end();
     console.log("File saved successfully in the Downloads folder under the name ::::: ", fullname);
