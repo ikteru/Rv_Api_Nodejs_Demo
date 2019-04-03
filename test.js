@@ -1,14 +1,18 @@
 // ******************************************************************** //
+// Imports
+// ******************************************************************** //
+
 let realvision = require('./slicer');
 let fs = require('fs');
-require('dotenv').config;
+let configs = require('./configs.js');
+
+// ******************************************************************** // 
 // ******************************************************************** //
 
 //Use this to import the file that you want to slice, the file must have an .rvwj extension.
-const rvwjFile = fs.createReadStream(process.env.FILE_TO_SLICE)
+const rvwjFile = fs.createReadStream(configs.FILE_TO_SLICE)
 
 //This is the data you'll be sending with the ProvideFile POST request, feel free to specifiy the configurations you deem fit.
-
 const formData =
 {
     file:
@@ -16,24 +20,24 @@ const formData =
         value: rvwjFile ,
         options:
         {
-            filename: 'filetoslice.rvwj',
-            contentType: null
+            filename: configs.FILENAME,
+            contentType: "application/json"
         }
     },
-    supportType: process.env.SUPPORT_TYPE,
-    printerModel: process.env.PRINTER_MODEL,
-    configPresetName: process.env.CONFIG_PRESET_NAME,
-    configFile: process.env.CONFIG_FILE
+    supportType: configs.SUPPORT_TYPE,
+    printerModel: configs.PRINTER_MODEL,
+    configPresetName: configs.CONFIG_PRESET_NAME,
+    configFile: configs.CONFIG_FILE
 } 
 
-// This function will execute the whole Slicing processing from checking the activation status to Downloading the file and saving it in the "downloads" folder.
+// This function will execute the whole Slicing flow from checking the activation status to Downloading the file and saving it in the "downloads" folder.
 //To execute this process, go to your command line interface and cd into this folder, then write: "node test.js", or you can simply execute the npm script by typing: "npm test"
 
 executeFlow(formData);
 
-
-
 // ******************************************************************** //
+// ******************************************************************** //
+
 async function executeFlow(formData){
 
     let activationStatus = realvision.GetActivationStatus();
