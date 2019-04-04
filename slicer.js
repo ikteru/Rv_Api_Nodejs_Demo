@@ -30,6 +30,11 @@ module.exports.GetPrintingInformation = async function (id){
     return module.exports.initializeRequest("POST", baseUrl, "GetPrintingInformation", formData);
 }
 
+module.exports.CancelSlicing = async function (id){
+    const formData = { uniqueID: id };
+    return module.exports.initializeRequest("POST", baseUrl, "CancelSlicing", formData);
+}
+
 module.exports.DownloadFile = async function (id) {
     const formData = { uniqueID: id };
     return await module.exports.initializeRequest("POST", baseUrl, "DownloadFile", formData);
