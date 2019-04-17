@@ -7,6 +7,9 @@ require("dotenv").config()
 //Global Variables
 const baseUrl = process.env.API_LINK;
 
+module.exports.TOKEN = "";
+module.exports.TOKEN_EXPIRES_ON = "";
+
 //The HTTP Request functions, all these functions accept at most one parameter: 
 //      either the formData object which contains the file to slice and its configurations, or the uniqueID of the slicing job.
 //      or no parameter at all in GetActivationStatus's case
@@ -52,6 +55,44 @@ module.exports.saveFile = function (filename, result){
     console.log("File saved successfully in the Downloads folder under the name ::::: ", fullname);
 }
 
+//Get token first 
+
+module.exports.getToken = function() {
+
+    const formData = {
+        grant_type: "client_credentials",
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        resource: "https://api.createitreal.com/"
+    }
+
+    const options = {
+        method: "GET",
+        url: "https://login.microsoftonline.com/186eb8de-01f4-4c87-9d83-4946009f1791/oauth2/token",
+        formData: formData
+    }
+
+    return new Promise(function (resolve, reject) {
+        // Make the http request using the lightweight "request" library
+        request(options, function (err, resp, body) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(body);
+            }
+        })
+    }).then(
+        result => {
+            
+            fs.writeFile("./token.json", result, function(){
+                console.log("TOKEN SUCCESSFULLY SAVED")
+            });
+            const temp = JSON.parse(result);
+            return temp.access_token;
+        }
+    )
+}
+
 //This is the function you call in order to execute the HTTP requests,
 //all the functions above use this function.
 module.exports.initializeRequest = function (method, baseUrl, serviceCall, formData) {
@@ -59,28 +100,38 @@ module.exports.initializeRequest = function (method, baseUrl, serviceCall, formD
     let options = {
         method: method,
         url: baseUrl + "/" + serviceCall,
+        followAllRedirects: true,
         headers: {
+            'Authorization': process.env.TOKEN,
             'Ocp-Apim-Subscription-Key': process.env.SUBSCRIPTION_KEY,
-            'content-type': 'multipart/form-data'
         },
-        formData: formData
+        formData : formData
     }
+
+    if(serviceCall ==  "GetActivationStatus"){
+        delete options["formData"];
+    }
+    
     // Return new promise 
     return new Promise(function (resolve, reject) {
         // Make the http request using the lightweight "request" library
         request(options, function (err, resp, body) {
+            console.log(" ************************************************************************************** ");
+            console.log("   Full URL  ::::: " + options.url );
             if (err) {
                 reject(err);
             } else {
-                console.log("Status code of ::::: " + serviceCall + "::::: is ::::: " + resp.statusCode);
-
+                
+                console.log("   Status code of  ::::: " + serviceCall + "   ::::: is ::::: " + resp.statusCode);
                 if(resp.statusCode !== 500 ){
                     resolve(body);
+                    console.log("   Result of       ::::: " + serviceCall + "   ::::: is ::::: " + body);
                 } else {
                     resolve(resp.statusCode)
                 }
                 
             }
-        })
+            console.log(" ************************************************************************************** ");
+        })      
     })
 }
