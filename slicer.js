@@ -88,6 +88,7 @@ module.exports.getToken = function() {
                 console.log("TOKEN SUCCESSFULLY SAVED")
             });
             const temp = JSON.parse(result);
+            console.log("ACCESS TOKEN   :::::: ",temp)
             return temp.access_token;
         }
     )
@@ -96,13 +97,15 @@ module.exports.getToken = function() {
 //This is the function you call in order to execute the HTTP requests,
 //all the functions above use this function.
 module.exports.initializeRequest = function (method, baseUrl, serviceCall, formData) {
+    //Getting token from the token.json file
+    const TOKEN = require("./token.json").access_token
     // Setting URL and headers for request
     let options = {
         method: method,
         url: baseUrl + "/" + serviceCall,
         followAllRedirects: true,
         headers: {
-            'Authorization': process.env.TOKEN,
+            'Authorization': TOKEN,
             'Ocp-Apim-Subscription-Key': process.env.SUBSCRIPTION_KEY,
         },
         formData : formData

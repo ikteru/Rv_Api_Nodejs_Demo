@@ -32,7 +32,13 @@ const formData =
 
 // This function will execute the whole Slicing flow from checking the activation status to Downloading the file and saving it in the "downloads" folder.
 //To execute this process, go to your command line interface and cd into this folder, then write: "node test.js", or you can simply execute the npm script by typing: "npm test"
-check() ? realvision.GetActivationStatus() : realvision.getToken().then( ()=> realvision.GetActivationStatus() )
+//check() ? realvision.GetActivationStatus() : realvision.getToken().then( ()=> realvision.GetActivationStatus() )
+
+
+check() ? executeFlow(formData) : realvision.getToken().then( ()=> executeFlow(formData))
+
+// ******************************************************************** //
+// ******************************************************************** //
 
 function check(){
     const token = require("./token.json");
@@ -49,10 +55,6 @@ function check(){
     console.log("We need to get token.")
     return false;
 }
-//executeFlow(formData);
-
-// ******************************************************************** //
-// ******************************************************************** //
 
 async function executeFlow(formData){
 
