@@ -57,7 +57,7 @@ module.exports.saveFile = function (filename, result){
 
 //Get token first 
 
-module.exports.getToken = function() {
+module.exports.getToken = function(tokenFile) {
 
     const formData = {
         grant_type: "client_credentials",
@@ -72,6 +72,14 @@ module.exports.getToken = function() {
         formData: formData
     }
 
+    const writeFile = (path, data, opts = 'utf8') =>
+        new Promise((resolve, reject) => {
+            fs.writeFile(path, data, opts, (err) => {
+            if (err) reject(err)
+            else resolve()
+            })
+        })
+
     return new Promise(function (resolve, reject) {
         // Make the http request using the lightweight "request" library
         request(options, function (err, resp, body) {
@@ -82,14 +90,15 @@ module.exports.getToken = function() {
             }
         })
     }).then(
-        result => {
-            
-            fs.writeFile("./token.json", result, function(){
-                console.log("TOKEN SUCCESSFULLY SAVED")
-            });
-            const temp = JSON.parse(result);
-            console.log("ACCESS TOKEN   :::::: ",temp)
-            return temp.access_token;
+             result => 
+        writeFile(tokenFile, result, function(){
+            console.log("TOKEN SUCCESSFULLY SAVED")
+        })
+        
+    ).then(
+        () => {
+            const result = require("./token.json");
+            return result.access_token;
         }
     )
 }

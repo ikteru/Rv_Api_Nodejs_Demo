@@ -34,42 +34,60 @@ const formData =
 //To execute this process, go to your command line interface and cd into this folder, then write: "node test.js", or you can simply execute the npm script by typing: "npm test"
 //check() ? realvision.GetActivationStatus() : realvision.getToken().then( ()=> realvision.GetActivationStatus() )
 
-
-check() ? executeFlow(formData) : realvision.getToken().then( ()=> executeFlow(formData))
+check() ? executeFlow(formData) : realvision.getToken("./token.json").then( ()=> executeFlow(formData))
 
 // ******************************************************************** //
 // ******************************************************************** //
 
 function check(){
-    const token = require("./token.json");
+    let token = {};
 
+    try{
+        token = require("./token.json");
+        
+    }catch{
+        console.log("Error retrieving token from token.js file ... ");
+        return false
+    }
+    
+    
+    //const token = JSON.parse(tokenTxt);
+    console.log();
+    console.log(" ************************************************************************************** ");
     if(token.expires_on == ""){
-        console.log("NO EXPIRY DATE SPECIFIED")
+        console.log("   NO EXPIRY DATE SPECIFIED")
     }
     else if( Date.now() / 1000 < token.expires_on ){
-        console.log("NO NEED TO GET TOKEN");
-        console.log("Current Time   ::: ", Date.now()/1000 );
-        console.log("EXPIRY TIME    ::: ", token.expires_on)
+        console.log("   NO NEED TO GET TOKEN");
+        console.log("   Current Time   ::: ", Date.now()/1000 );
+        console.log("   EXPIRY TIME    ::: ", token.expires_on)
+        console.log(" ************************************************************************************** ");
+        console.log();
+        
         return true;
     }
     console.log("We need to get token.")
+    console.log(" ************************************************************************************** ");
+    console.log();
     return false;
 }
 
 async function executeFlow(formData){
 
-    let activationStatus = realvision.GetActivationStatus();
+    let activationStatus = await realvision.GetActivationStatus();
 
     if (activationStatus){
 
         let uniqueID = await realvision.ProvideFile(formData);
-        console.log("uniqueID   ::::::: ", uniqueID);
         let progress = 0;
-        while ( progress != -1 && progress < 1 ) {
+        while ( progress != -1 && progress != 2 && progress < 1 ) {
             progress = await realvision.GetProgress(uniqueID);
-            console.log("Progress   ::::::: ", progress);
+            
+            Number.isInteger(progress) ? console.log("Progress   ::::::: ", progress) : progress = 2
         }
-        
+        if (progress == 2 ){
+            console.log("Error while fetching progress from server ... ");
+        }
         if (progress == 1){
             let printingInformation = await realvision.GetPrintingInformation(uniqueID);
             console.log("Printing Information   : ", printingInformation);
