@@ -30,47 +30,17 @@ const formData =
     configFile: configs.CONFIG_FILE
 } 
 
-// This function will execute the whole Slicing flow from checking the activation status to Downloading the file and saving it in the "downloads" folder.
+//After checking if the token is valid or not using the checkTokenValidity() function
+//The executeFlow() function will execute the whole Slicing flow from checking the activation status to Downloading the file and saving it in the "downloads" folder.
 //To execute this process, go to your command line interface and cd into this folder, then write: "node test.js", or you can simply execute the npm script by typing: "npm test"
 //check() ? realvision.GetActivationStatus() : realvision.getToken().then( ()=> realvision.GetActivationStatus() )
 
-check() ? executeFlow(formData) : realvision.getToken("./token.json").then( ()=> executeFlow(formData))
+executeFlow(formData) ;
 
 // ******************************************************************** //
 // ******************************************************************** //
 
-function check(){
-    let token = {};
 
-    try{
-        token = require("./token.json");
-        
-    }catch{
-        console.log("Error retrieving token from token.js file ... ");
-        return false
-    }
-    
-    
-    //const token = JSON.parse(tokenTxt);
-    console.log();
-    console.log(" ************************************************************************************** ");
-    if(token.expires_on == ""){
-        console.log("   NO EXPIRY DATE SPECIFIED")
-    }
-    else if( Date.now() / 1000 < token.expires_on ){
-        console.log("   NO NEED TO GET TOKEN");
-        console.log("   Current Time   ::: ", Date.now()/1000 );
-        console.log("   EXPIRY TIME    ::: ", token.expires_on)
-        console.log(" ************************************************************************************** ");
-        console.log();
-        
-        return true;
-    }
-    console.log("We need to get token.")
-    console.log(" ************************************************************************************** ");
-    console.log();
-    return false;
-}
 
 async function executeFlow(formData){
 
@@ -86,7 +56,7 @@ async function executeFlow(formData){
             Number.isInteger(progress) ? console.log("Progress   ::::::: ", progress) : progress = 2
         }
         if (progress == 2 ){
-            console.log("Error while fetching progress from server ... ");
+            console.log( "Error while fetching progress from server ... ");
         }
         if (progress == 1){
             let printingInformation = await realvision.GetPrintingInformation(uniqueID);
