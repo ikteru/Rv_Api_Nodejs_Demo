@@ -9,40 +9,40 @@ let configs = require('./configs.js');
 // ******************************************************************** // 
 // ******************************************************************** //
 
-//Use this to import the file that you want to slice, the file must have an .rvwj extension.
-const rvwjFile = fs.createReadStream(configs.FILE_TO_SLICE)
 
-//This is the data you'll be sending with the ProvideFile POST request, feel free to specifiy the configurations you deem fit.
-const formData =
-{
-    file:
-    {
-        value: rvwjFile ,
-        options:
-        {
-            filename: configs.FILENAME,
-            contentType: "application/json"
-        }
-    },
-    supportType: configs.SUPPORT_TYPE,
-    printerModel: configs.PRINTER_MODEL,
-    configPresetName: configs.CONFIG_PRESET_NAME,
-    configFile: configs.CONFIG_FILE
-} 
-
-//After checking if the token is valid or not using the checkTokenValidity() function
+//After checking if the token is valid or not
 //The executeFlow() function will execute the whole Slicing flow from checking the activation status to Downloading the file and saving it in the "downloads" folder.
 //To execute this process, go to your command line interface and cd into this folder, then write: "node test.js", or you can simply execute the npm script by typing: "npm test"
-//check() ? realvision.GetActivationStatus() : realvision.getToken().then( ()=> realvision.GetActivationStatus() )
 
-executeFlow(formData) ;
+ExecuteSlicingFlow() ;
 
 // ******************************************************************** //
 // ******************************************************************** //
 
 
 
-async function executeFlow(formData){
+async function ExecuteSlicingFlow(){
+
+    //Use this to import the file that you want to slice, the file must have an .rvwj extension.
+    const rvwjFile = fs.createReadStream(configs.FILE_TO_SLICE)
+
+    //This is the data you'll be sending with the ProvideFile POST request, feel free to specifiy the configurations you deem fit.
+    const formData =
+    {
+        file:
+        {
+            value: rvwjFile ,
+            options:
+            {
+                filename: configs.FILENAME,
+                contentType: "application/json"
+            }
+        },
+        supportType: configs.SUPPORT_TYPE,
+        printerModel: configs.PRINTER_MODEL,
+        configPresetName: configs.CONFIG_PRESET_NAME,
+        configFile: configs.CONFIG_FILE
+    } 
 
     let activationStatus = await realvision.GetActivationStatus();
 
