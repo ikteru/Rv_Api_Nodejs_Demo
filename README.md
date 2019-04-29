@@ -26,6 +26,8 @@ npm install
 This will install all the dependencies needed for the project to run.
 
 Now that you're set up. The next step is to change the Subscription key in the ".env" file. 
+And while you're at it, change the CLIENT_ID and CLIENT_SECRET to your own.
+
 Once you've done that, go to the "configs.js" file to set the file you want to slice and where the result fcode will be stored.
 You can also change the configs of the slicing job like the printer model, the support type or even specify your own custom configs.
 
