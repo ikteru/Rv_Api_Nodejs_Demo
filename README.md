@@ -40,7 +40,7 @@ Now that everything is in order, all you need to do is execute:
 or:
 
 ``` ```
-``` node test.js ```
+``` node App.js ```
 ``` ```
 What the commands above do is that they call the API using your subscription key, send the file you want to slice and download the result fcode file then store it in the downloads folder.
 You'll see some logs pop up in the CLI showing the progress of the slicing job.
