@@ -137,10 +137,10 @@ getToken = async () => {
 //all the functions above use this function.
 initializeRequest = async (method, baseUrl, serviceCall, formData) => {
     //Getting token 
-    // let TOKEN = await getToken()
-    // if( !TOKEN.access_token ){
-    //     throw Error();
-    // }
+    let TOKEN = await getToken()
+    if( !TOKEN.access_token ){
+        throw Error();
+    }
     
     //Since DownlodFile doesn't accept JSON, we send the taskId in the URL and not the body of the request.
     let url = serviceCall !== "DownloadFile" ? baseUrl + "/" + serviceCall : baseUrl + "/" + "DownloadFile?taskId=" + formData.taskId
