@@ -19,7 +19,7 @@ GetActivationStatus = async () => {
 
 ProvideFile = async (formData) => {
     const result = await initializeRequest("POST", baseUrl, "ProvideFile", formData)
-    return result.taskId;
+    return result.taskId; 
 }
 
 GetProgress = async (id) => {
@@ -144,7 +144,9 @@ initializeRequest = async (method, baseUrl, serviceCall, formData) => {
     
     //Since DownlodFile doesn't accept JSON, we send the taskId in the URL and not the body of the request.
     let url = serviceCall !== "DownloadFile" ? baseUrl + "/" + serviceCall : baseUrl + "/" + "DownloadFile?taskId=" + formData.taskId
-        
+    //IF servicecall is downloadfile
+    let filename = "";
+
     let options = {
         method: method,
         uri: url,
@@ -155,11 +157,28 @@ initializeRequest = async (method, baseUrl, serviceCall, formData) => {
             'Authorization': "Bearer " + TOKEN
         },
         body: formData,
+        resolveWithFullResponse: true,
         json:true
     }
 
     // Return new promise 
     return request(options)
+        .then( resp => {
+            if( serviceCall !== "DownloadFile"){
+                return resp.body
+            }else {
+                const contentDisposition = resp.headers["content-disposition"];
+                if (contentDisposition && contentDisposition.indexOf('attachment') !== -1) {
+                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    var matches = filenameRegex.exec(contentDisposition);
+                    if (matches != null && matches[1]) { 
+                        result = matches[1].replace(/['"]/g, '');
+                        filename = result.split(".",1)
+                    }
+                }
+                return resp.body
+            }
+        })
         .catch( resp => {
             console.log(" ************************************************************************************** ");
             console.error("ERROR WHILE MAKING REQUEST :::::: ");
@@ -177,8 +196,7 @@ initializeRequest = async (method, baseUrl, serviceCall, formData) => {
                 console.log("   Status Description of ::::: " + serviceCall + "   ::::: is ::::: ", resp.result ? "OK" : resp.error.statusDescription );
                 console.log("   Result of       ::::: " + serviceCall + "   ::::: is ::::: ", resp.result ? resp.result : resp.error.error );
             } else {
-                resp.error ? "" : saveFile("newfile", resp)
-
+                resp.error ? "" : saveFile(filename, resp)
                 console.log("   Status code of  ::::: " + serviceCall + "   ::::: is ::::: ", resp.error ? resp.error.statusCode : "200" );
                 console.log("   Status Description of ::::: " + serviceCall + "   ::::: is ::::: ", resp.error ? resp.error.statusDescription : "OK" );
                 console.log("   Result of       ::::: " + serviceCall + "   ::::: is ::::: ", resp.error ? resp.error.error :"Please check your downloads folder ... "  );
